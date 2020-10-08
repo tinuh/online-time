@@ -6,13 +6,18 @@ import Button from "@material-ui/core/Button";
 import Modal from "@material-ui/core/modal";
 import Backdrop from '@material-ui/core/Backdrop';
 import Fade from '@material-ui/core/Fade';
+import TextField from "@material-ui/core/TextField"
 
 function Configurator(props) {
     const classes = props.useStyles();
 
     //Modal Pop Up to get started
-    const getStarted = () => {
+    const close = () => {
         props.onAction();
+    }
+
+    const more = () => {
+        alert("In Construction")
     }
 
     return (
@@ -22,7 +27,7 @@ function Configurator(props) {
                 aria-describedby="transition-modal-description"
                 className={classes.modal}
                 open={props.open}
-                onClose={getStarted}
+                onClose={close}
                 closeAfterTransition
                 BackdropComponent={Backdrop}
                 BackdropProps={{
@@ -32,8 +37,10 @@ function Configurator(props) {
                 <Fade in={props.open}>
                 <div className={classes.paper}>
                     <h2 id="transition-modal-title">Configurator</h2>
-                    <p id="transition-modal-description">Protect your eyes and health while using your computer.</p><br/>
-                    <Button variant = "contained" color = "primary" onClick = {getStarted}>Get Started</Button>
+                    <TextField variant = "outlined" label = "Eye Break Interval (Minutes)" value = {props.eyeInterval} onChange = {props.setEyeInterval}></TextField> &nbsp;
+                    <TextField variant = "outlined" label = "Eye Break Duration (Seconds)" value = {props.eyeTime} onChange = {props.setEyeTime}></TextField>
+                    <br/><br/><Button variant = "contained" color = "primary" onClick = {close}>Start</Button> &nbsp;
+                    <Button variant = "contained" color = "secondary" onClick = {more}>Learn More</Button>
                 </div>
                 </Fade>
             </Modal>
