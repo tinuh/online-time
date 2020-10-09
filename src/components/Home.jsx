@@ -16,18 +16,21 @@ import GetStarted from "./GetStarted";
 import Configurator from "./Configurator";
 
 const useStyles = makeStyles((theme) => ({
-  modal: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  paper: {
-    backgroundColor: theme.palette.background.paper,
-    border: '2px solid #000',
-    boxShadow: theme.shadows[5],
-    padding: theme.spacing(2, 4, 3),
-  },
-}));
+    modal: {
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    paper: {
+      backgroundColor: theme.palette.background.paper,
+      border: '2px solid #000',
+      boxShadow: theme.shadows[5],
+      padding: theme.spacing(2, 4, 3),
+    },
+    margin: {
+      margin: theme.spacing(1),
+    },
+  }));
 
 function Home() {
     const classes = useStyles();
@@ -35,7 +38,7 @@ function Home() {
     //Get Local Storage Values
     let firstTime = true;
     let config = undefined;
-    if (JSON.parse(localStorage.getItem('config')) !== null){
+    if (JSON.parse(localStorage.getItem('config')) !== null && Notification.permission === "granted"){
         firstTime = false;
         config = JSON.parse(localStorage.getItem('config'))
         console.log(config);
@@ -47,9 +50,35 @@ function Home() {
     const [countdown, setCountdown] = React.useState(false);
     const [eyeTime, setEyeTimeState] = React.useState(!firstTime ? config.eyeTime : 20);
     const [eyeInterval, setEyeIntervalState] = React.useState(!firstTime ? config.eyeInterval : 20);
-    const [moveTime, setMoveTime] = React.useState(60);
-    const [moveInterval, setMoveInterval] = React.useState(3600000);
+    const [moveTime, setMoveTimeState] = React.useState(5);
+    const [moveInterval, setMoveIntervalState] = React.useState(60);
+    const [enabled, setEnabledState] = React.useState({'eye': true, 'move': true});
     var notifcation;
+
+    //state functions
+    const setEyeTime = (e) => {
+        setEyeTimeState(e.target.value);
+    }
+    const setEyeInterval = (e) => {
+        setEyeIntervalState(e.target.value);
+    }
+    const setMoveTime = (e) => {
+        setMoveTimeState(e.target.value);
+    }
+    const setMoveInterval = (e) => {
+        setMoveIntervalState(e.target.value);
+    }
+    const setEnabled = (event, newEnable) => {
+        setEnabledState(newEnable);
+    }
+    const handleEnabled = (type) => {
+        if (type === 'eye'){
+            setEnabledState({'eye': !enabled.eye, 'move': enabled.move})
+        }
+        else {
+            setEnabledState({'eye': enabled.eye, 'move': !enabled.move})
+        }
+    }
 
     //Before Unload
     window.addEventListener('beforeunload', (event) => {
@@ -62,14 +91,6 @@ function Home() {
         config = {'eyeTime': eyeTime, 'eyeInterval': eyeInterval, 'moveTime': moveTime, 'moveInterval': moveInterval}
         localStorage.setItem('config', JSON.stringify(config));
     });
-
-    //state functions
-    const setEyeTime = (e) => {
-        setEyeTimeState(e.target.value);
-    }
-    const setEyeInterval = (e) => {
-        setEyeIntervalState(e.target.value);
-    }
 
     //Push Notification Function
     const PushNotification = (msg, des, OnClick=null) => {
@@ -129,7 +150,22 @@ function Home() {
             </CountdownCircleTimer>}
             
             <GetStarted open = {openingModal} useStyles={useStyles} onAction = {startScreen}/>
-            <Configurator open = {configModal} useStyles={useStyles} onAction={start} setEyeInterval = {setEyeInterval} eyeInterval = {eyeInterval} setEyeTime = {setEyeTime} eyeTime = {eyeTime}/>
+            <Configurator 
+                open = {configModal} 
+                useStyles={useStyles} 
+                onAction={start} 
+                setEyeInterval = {setEyeInterval} 
+                eyeInterval = {eyeInterval} 
+                setEyeTime = {setEyeTime} 
+                eyeTime = {eyeTime}
+                moveTime = {moveTime}
+                setMoveTime = {setMoveTime}
+                moveInterval = {moveInterval}
+                setMoveInterval={setMoveInterval}
+                enabledState = {enabled}
+                setEnabledState = {setEnabled}
+                handleEnable = {handleEnabled}
+            />
             
         </div>
   );
