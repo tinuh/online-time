@@ -7,8 +7,39 @@ import Modal from "@material-ui/core/modal";
 import Backdrop from '@material-ui/core/Backdrop';
 import Fade from '@material-ui/core/Fade';
 
+import { makeStyles } from '@material-ui/core/styles';
+
+const useStyles = makeStyles((theme) => ({
+    modal: {
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    paper: {
+      backgroundColor: theme.palette.background.paper,
+      border: '2px solid #000',
+      boxShadow: theme.shadows[5],
+      padding: theme.spacing(2, 4, 3),
+    },
+    margin: {
+      margin: theme.spacing(1),
+    },
+    title: {
+        color: theme.palette.text.primary,
+        fontSize: "24px",
+        paddingTop: "10px",
+        paddingBottom: "10px",
+    },
+    text: {
+        color: theme.palette.text.primary,
+        fontSize: "16px",
+        paddingBottom: "10px",
+    },
+}));
+
+
 function GetStarted(props) {
-    const classes = props.useStyles();
+    const classes = useStyles();
 
     //Modal Pop Up to get started
     const getStarted = () => {
@@ -31,8 +62,8 @@ function GetStarted(props) {
             >
                 <Fade in={props.open}>
                 <div className={classes.paper}>
-                    <h2 id="transition-modal-title">Welcome to Online Time</h2>
-                    <p id="transition-modal-description">Protect your eyes and health while using your computer.</p><br/>
+                    <h2 id="transition-modal-title" className = {classes.title}>Welcome to Online Time</h2>
+                    <p id="transition-modal-description" className = {classes.text}>Protect your eyes and health while using your computer.</p><br/>
                     <Button variant = "contained" color = "primary" onClick = {getStarted}>Get Started</Button>
                 </div>
                 </Fade>

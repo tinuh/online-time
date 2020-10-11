@@ -5,15 +5,18 @@ import '../styles/style.css';
 import Icon from "../img/icon.png";
 
 //Countdown Package
-import { CountdownCircleTimer } from 'react-countdown-circle-timer'
+import { CountdownCircleTimer } from 'react-countdown-circle-timer';
+
+//React Router
+import {useHistory} from "react-router-dom";
 
 //Material UI
 import { makeStyles } from '@material-ui/core/styles';
-//import Button from "@material-ui/core/Button";
 
 //Componenets
 import GetStarted from "./GetStarted";
 import Configurator from "./Configurator";
+import Navbar from "./Navbar";
 
 const useStyles = makeStyles((theme) => ({
     modal: {
@@ -30,30 +33,53 @@ const useStyles = makeStyles((theme) => ({
     margin: {
       margin: theme.spacing(1),
     },
+    title : {
+        color: theme.palette.text.primary,
+        marginRight: "25%",
+        textAlign: "center",
+    }
   }));
 
 function Home() {
     const classes = useStyles();
+    const history = useHistory();
+
+    var firstTime = true;
+    var config = undefined;
+    var page = '0';
 
     //Get Local Storage Values
-    let firstTime = true;
-    let config = undefined;
     if (JSON.parse(localStorage.getItem('config')) !== null && Notification.permission === "granted"){
         firstTime = false;
         config = JSON.parse(localStorage.getItem('config'))
-        console.log(config);
     }
 
+    //Check path
+    let path = window.location.pathname;
+    if (path === "/dashboard"){
+        page = '1';
+    }
+    else if (path === "/stats"){
+        page = '2';
+    }
+    else if (path === "/config"){
+        page = '3';
+    }
+    
+    
     //states
-    const [openingModal, setOpeningModal] = React.useState(firstTime);
-    const [configModal, setConfigModal] = React.useState(!firstTime);
-    const [countdown, setCountdown] = React.useState(false);
+    const [openingModal, setOpeningModal] = React.useState(page !== "3" ? firstTime: false);
+    const [configModal, setConfigModal] = React.useState(page === "3" ? true : !firstTime);
+    const [countdownEye, setCountdownEye] = React.useState(false);
+    const [countdownMove, setCountdownMove] = React.useState(false);
     const [eyeTime, setEyeTimeState] = React.useState(!firstTime ? config.eyeTime : 20);
     const [eyeInterval, setEyeIntervalState] = React.useState(!firstTime ? config.eyeInterval : 20);
-    const [moveTime, setMoveTimeState] = React.useState(5);
-    const [moveInterval, setMoveIntervalState] = React.useState(60);
+    const [moveTime, setMoveTimeState] = React.useState(!firstTime ? config.moveTime : 5);
+    const [moveInterval, setMoveIntervalState] = React.useState(!firstTime ? config.moveInterval : 60);
     const [enabled, setEnabledState] = React.useState({'eye': true, 'move': true});
-    var notifcation;
+    const [nav, setNav] = React.useState(page);
+    var notificationEye;
+    var notificationMove;
 
     //state functions
     const setEyeTime = (e) => {
@@ -86,7 +112,7 @@ function Home() {
         event.preventDefault();
         // Chrome requires returnValue to be set.
         event.returnValue = '';
-        alert("Bye");
+        //alert("Bye");
         
         config = {'eyeTime': eyeTime, 'eyeInterval': eyeInterval, 'moveTime': moveTime, 'moveInterval': moveInterval}
         localStorage.setItem('config', JSON.stringify(config));
@@ -94,8 +120,8 @@ function Home() {
 
     //Push Notification Function
     const PushNotification = (msg, des, OnClick=null) => {
-        var notification = new Notification(msg, {body: des, icon: Icon});
-        notification.onclick = function(event) {
+        var notifi = new Notification(msg, {body: des, icon: Icon});
+        notifi.onclick = function(event) {
             window.focus()
             if (OnClick !== null){
                 OnClick();
@@ -103,11 +129,21 @@ function Home() {
         }
     }
 
-    //Get Started
+    //Get Started Pop-up
+    const getStarted = () => {
+        setOpeningModal(false);
+        setConfigModal(true);
+        history.push("/config")
+    }
+
+    //To Start
     const startScreen = () => {
-        if (Notification.permission === "granted"){
-            setOpeningModal(false);
-            setConfigModal(true);
+        if (!enabled.eye && !enabled.move){
+            setConfigModal(false);
+        }
+        else if (Notification.permission === "granted"){
+            setConfigModal(false);
+            start();
         }
         else if (Notification.permission === "denied"){
             alert("Please enable Notifications to proceed further")
@@ -119,44 +155,108 @@ function Home() {
         
     }
 
-    //Countdown Functions
-    const startCountdown = () => {
-        setCountdown(true);
+    //Eye Countdown
+    const startEye = () => {
+        clearTimeout(notificationEye);
+        notificationEye = setTimeout(() => PushNotification("Time to Look Away", "Click to start timer", () => startCountdown('eye')), eyeInterval * 60000)
     }
 
-    const stopCountdown = () => {
-        setCountdown(false);
-        notifcation = setTimeout(() => PushNotification("Time to take a Break", "Look Away, Click for more info", startCountdown), eyeInterval * 60000)
+    //Move Countdown
+    const startMove = () => {
+        clearTimeout(notificationMove);
+        notificationMove = setTimeout(() => PushNotification("Time to Move", "Click to start timer", () => startCountdown('move')), moveInterval * 60000)
+    }
+
+
+    //Countdown Functions
+    const startCountdown = (type) => {
+        if (type === "eye"){
+            setCountdownEye(true);
+        }
+        else if (type === "move"){
+            setCountdownMove(true)
+        }
+    }
+
+    const stopCountdown = (type) => {
+        if (type === "eye"){
+            setCountdownEye(false);
+            startEye();
+        }
+        else if (type === "move"){
+            setCountdownMove(false);
+            startMove();
+        }   
     }
 
     //Actually Start
     const start = () => {
-        setConfigModal(false);
-        notifcation = setTimeout(() => PushNotification("Time to take a Break", "Look Away, Click for more info", startCountdown), eyeInterval * 60000)
+        if (enabled.eye){
+            startEye();
+        }
+        if (enabled.move){
+            startMove();
+        }
     }
 
     return (
         <div className="Home">
-            {countdown && <CountdownCircleTimer
-                isPlaying
-                duration={eyeTime}
-                colors={[
-                ['#004777', 0.33],
-                ['#F7B801', 0.33],
-                ['#A30000', 0.33],
-                ]}
-            >
-                {({ remainingTime }) => remainingTime !== 0 ? <h1>{remainingTime}</h1> : stopCountdown()}
-            </CountdownCircleTimer>}
+            <div className = "row">
+                <div className = "col-md-4 nav-div">
+                    <Navbar page = {nav} setNav = {setNav}/>
+                </div>
+
+                <div className = "col-md-8">
+
+                    <div style = {window.location.pathname !== "/dashboard" ? {display: "none"} : {display: "block"}}>
+                        <h2 className = {classes.title}>Dashboard</h2>
+                            {countdownEye && <CountdownCircleTimer
+                            isPlaying
+                            duration={eyeTime}
+                            className = {classes.textColor}
+                            colors={[
+                            ['#004777', 0.33],
+                            ['#F7B801', 0.33],
+                            ['#A30000', 0.33],
+                            ]}
+                        >
+                            {({ remainingTime }) => remainingTime !== 0 ? <h1>{remainingTime}</h1> : stopCountdown("eye")}
+                        </CountdownCircleTimer>}
+
+                        {countdownMove && <CountdownCircleTimer
+                            isPlaying
+                            duration={moveTime * 60}
+                            colors={[
+                            ['#004777', 0.33],
+                            ['#F7B801', 0.33],
+                            ['#A30000', 0.33],
+                            ]}
+                        >
+                            {({ remainingTime }) => remainingTime !== 0 ? <h1>{Math.ceil(remainingTime/60)}</h1> : stopCountdown("move")}
+                        </CountdownCircleTimer>}
+                    </div>
+
+                    <div style = {window.location.pathname !== "/stats" ? {display: "none"} : {display: "block"}}>
+                        <h2 className = {classes.title}>Statistics</h2>
+                    </div>
+
+
+                    <div style = {window.location.pathname !== "/config" ? {display: "none"} : {display: "block"}}>
+                        <h2 className = {classes.title}>Configuration</h2>
+                    </div>
+
+                   
+                </div>
+            </div>
             
-            <GetStarted open = {openingModal} useStyles={useStyles} onAction = {startScreen}/>
+            <GetStarted open = {openingModal} useStyles={useStyles} onAction = {getStarted}/>
             <Configurator 
                 open = {configModal} 
                 useStyles={useStyles} 
-                onAction={start} 
+                onAction={startScreen}
                 setEyeInterval = {setEyeInterval} 
-                eyeInterval = {eyeInterval} 
-                setEyeTime = {setEyeTime} 
+                eyeInterval = {eyeInterval}
+                setEyeTime = {setEyeTime}
                 eyeTime = {eyeTime}
                 moveTime = {moveTime}
                 setMoveTime = {setMoveTime}

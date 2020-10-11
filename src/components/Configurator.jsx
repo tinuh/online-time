@@ -31,7 +31,14 @@ const useStyles = makeStyles((theme) => ({
       margin: theme.spacing(1),
     },
     title: {
+        color: theme.palette.text.primary,
+        fontSize: "24px",
+    },
+    textColor: {
         color: theme.palette.text.primary
+    },
+    text : {
+        width: "250px"
     }
   }));
 
@@ -65,7 +72,7 @@ function Configurator(props) {
                 <div className={classes.paper}>
                     <h2 className = {classes.title} >Configurator</h2>
 
-                    <div name = "Toggle Buttons" className = {classes.title}>
+                    <div name = "Toggle Buttons" className = {classes.textColor}>
                         <Switch
                             checked={props.enabledState.eye}
                             onChange={() => props.handleEnable('eye')}
@@ -82,10 +89,10 @@ function Configurator(props) {
                         <br/><br/>
                     </div>
 
-                    <TextField variant = "filled" InputProps={{endAdornment: <InputAdornment position="end">Min</InputAdornment>}} label = "Eye Break Interval" disabled={props.enabledState.eye ? false : true} value = {props.eyeInterval} onChange = {props.setEyeInterval}></TextField> &nbsp;
-                    <TextField variant = "filled" InputProps={{endAdornment: <InputAdornment position="end">Sec</InputAdornment>}} label = "Eye Break Duration" disabled={props.enabledState.eye ? false : true} value = {props.eyeTime} onChange = {props.setEyeTime}></TextField> <br/><br/>
-                    <TextField variant = "filled" InputProps={{endAdornment: <InputAdornment position="end">Min</InputAdornment>}} label = "Move Break Interval" disabled={props.enabledState.move ? false : true} value = {props.moveInterval} onChange = {props.setMoveInterval}></TextField> &nbsp;
-                    <TextField variant = "filled" InputProps={{endAdornment: <InputAdornment position="end">Min</InputAdornment>}} id="standard-start-adornment" disabled={props.enabledState.move ? false : true}  label = "Move Break Duration" value = {props.moveTime} onChange = {props.setMoveTime}></TextField>
+                    <TextField variant = "filled" className = {classes.text} InputProps={{endAdornment: <InputAdornment position="end">Min</InputAdornment>}} label = "Eye Break Interval" disabled={props.enabledState.eye ? false : true} value = {props.eyeInterval} onChange = {props.setEyeInterval}></TextField> &nbsp;
+                    <TextField variant = "filled" className = {classes.text} InputProps={{endAdornment: <InputAdornment position="end">Sec</InputAdornment>}} label = "Eye Break Duration" disabled={props.enabledState.eye ? false : true} value = {props.eyeTime} onChange = {props.setEyeTime}></TextField> <br/><br/>
+                    <TextField variant = "filled" className = {classes.text} InputProps={{endAdornment: <InputAdornment position="end">Min</InputAdornment>}} label = "Move Break Interval" disabled={props.enabledState.move ? false : true} value = {props.moveInterval} onChange = {props.setMoveInterval}></TextField> &nbsp;
+                    <TextField variant = "filled" className = {classes.text} InputProps={{endAdornment: <InputAdornment position="end">Min</InputAdornment>}} id="standard-start-adornment" disabled={props.enabledState.move ? false : true}  label = "Move Break Duration" value = {props.moveTime} onChange = {props.setMoveTime}></TextField>
                     
                     <br/><br/><Button variant = "contained" color = "primary" onClick = {close} disabled={props.enabledState.move | props.enabledState.eye ? false : true}>Start</Button> &nbsp;
                     <Button variant = "contained" color = "secondary" onClick = {more}>Learn More</Button>

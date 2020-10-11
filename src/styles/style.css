@@ -1,0 +1,15 @@
+.icon {
+    width: 100px;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+}
+
+.container-header {
+    margin-bottom: 100px;
+}
+
+.side-nav {
+    margin-left: 50%;
+}
