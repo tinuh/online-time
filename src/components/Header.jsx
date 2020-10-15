@@ -28,14 +28,16 @@ function Header(props) {
     if (theme.palette.type === "dark"){
       theme.palette.type = "light";
       modTheme(theme);
-      props.setTheme(createMuiTheme(theme));
+      //props.setTheme(createMuiTheme(theme));
       localStorage.setItem('theme', JSON.stringify(theme));
+      window.location.reload()
     }
     else {
       theme.palette.type = "dark";
       modTheme(theme);
-      props.setTheme(createMuiTheme(theme));
+      //props.setTheme(createMuiTheme(theme));
       localStorage.setItem('theme', JSON.stringify(theme));
+      window.location.reload()
     }
   }
 

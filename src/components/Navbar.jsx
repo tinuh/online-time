@@ -33,11 +33,17 @@ function Navbar(props) {
     const config = () => {
         props.setNav("3");
         history.push("/config");
+        props.setConfigModal(true);
+    }
+
+    const info = () => {
+        props.setNav("4");
+        history.push("/info");
     }  
 
   return (
       <div className = "side-nav">
-          <div style={{ width: 250 }}>
+          <div style={{ width: "100%" }}>
             <Sidenav activeKey={props.page}>
             <Sidenav.Body>
                 <Nav>
@@ -49,6 +55,9 @@ function Navbar(props) {
                 </Nav.Item>
                 <Nav.Item onClick = {config} eventKey="3" icon={<Icon icon="gear-circle" />}>
                     Configuration
+                </Nav.Item>
+                <Nav.Item onClick = {info} eventKey="4" icon={<Icon icon="info-circle" />}>
+                    Learn More
                 </Nav.Item>
                 </Nav>
             </Sidenav.Body>

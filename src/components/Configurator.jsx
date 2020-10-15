@@ -46,12 +46,12 @@ function Configurator(props) {
     const classes = useStyles();
 
     //Modal Pop Up to get started
-    const close = () => {
+    const start = () => {
         props.onAction();
     }
 
-    const more = () => {
-        alert("In Construction")
+    const close = () => {
+        props.setConfigModal(false)
     }
 
     return (
@@ -94,8 +94,8 @@ function Configurator(props) {
                     <TextField variant = "filled" className = {classes.text} InputProps={{endAdornment: <InputAdornment position="end">Min</InputAdornment>}} label = "Move Break Interval" disabled={props.enabledState.move ? false : true} value = {props.moveInterval} onChange = {props.setMoveInterval}></TextField> &nbsp;
                     <TextField variant = "filled" className = {classes.text} InputProps={{endAdornment: <InputAdornment position="end">Min</InputAdornment>}} id="standard-start-adornment" disabled={props.enabledState.move ? false : true}  label = "Move Break Duration" value = {props.moveTime} onChange = {props.setMoveTime}></TextField>
                     
-                    <br/><br/><Button variant = "contained" color = "primary" onClick = {close} disabled={props.enabledState.move | props.enabledState.eye ? false : true}>Start</Button> &nbsp;
-                    <Button variant = "contained" color = "secondary" onClick = {more}>Learn More</Button>
+                    <br/><br/><Button variant = "contained" color = "primary" onClick = {start} disabled={props.enabledState.move | props.enabledState.eye ? false : true}>Start</Button> &nbsp;
+                    <Button variant = "contained" color = "secondary" onClick = {close}>Close</Button>
                 </div>
                 </Fade>
             </Modal>

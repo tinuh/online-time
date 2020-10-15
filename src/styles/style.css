@@ -1,5 +1,5 @@
 .icon {
-    width: 100px;
+    width: 85px;
 }
 
 body {
@@ -7,9 +7,22 @@ body {
 }
 
 .container-header {
-    margin-bottom: 100px;
+    margin-bottom: 30px;
 }
 
 .side-nav {
-    margin-left: 50%;
+    margin-left: 60%;
+    margin-top: 70px;
+}
+
+.card-content {
+    text-align: center;
+}
+
+.container
+{
+    width:100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
 }

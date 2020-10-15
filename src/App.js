@@ -1,6 +1,6 @@
 import React from 'react';
 import Light from 'rsuite/dist/styles/rsuite-default.css';
-import Dark from "rsuite/dist/styles/rsuite-dark.css";
+//import Dark from "rsuite/dist/styles/rsuite-dark.css";
 import './App.css';
 import {BrowserRouter, Route, Switch} from "react-router-dom";
 import {ThemeProvider, createMuiTheme} from "@material-ui/core";
@@ -33,7 +33,7 @@ function App() {
   const [theme, setTheme] = React.useState(createMuiTheme(storedTheme))
 
   return (
-    <div className="App" style = {theme.palette.type === "dark" ? Dark : Light}>
+    <div className="App">
         <BrowserRouter>
           <ThemeProvider theme = {theme}>
           
@@ -44,6 +44,7 @@ function App() {
               <Route exact path = "/dashboard" component={Home}/>
               <Route exact path = "/stats" component={Home}/>
               <Route exact path = "/config" component={Home}/>
+              <Route exact path = "/info" component={Home}/>
               <Route component={NotFound} />
 
             </Switch>
