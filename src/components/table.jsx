@@ -43,7 +43,7 @@ function Table(props) {
               <TableCell align="right">{row.protein}</TableCell>
               <TableCell align="center">
                   <Tooltip title = "Delete Record">
-                    <IconButton style = {{padding: "none"}}>
+                    <IconButton onClick = {() => props.onAction('delete', row.key)} style = {{padding: "none"}}>
                         <DeleteIcon/>
                     </IconButton>
                   </Tooltip>

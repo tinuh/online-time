@@ -9,6 +9,7 @@ import {useHistory} from "react-router-dom";
 
 //Material UI Theme
 import { makeStyles } from '@material-ui/core/styles';
+import Button from '@material-ui/core/Button';
 
 const useStyles = makeStyles((theme) => ({
     bgColor : {
@@ -47,21 +48,26 @@ function Navbar(props) {
             <Sidenav activeKey={props.page}>
             <Sidenav.Body>
                 <Nav>
-                <Nav.Item onClick = {dash} eventKey="1" icon={<Icon icon="dashboard" />}>
-                    Dashboard
-                </Nav.Item>
-                <Nav.Item onClick = {stats} eventKey="2" icon={<Icon icon="bar-chart" />}>
-                    Statistics
-                </Nav.Item>
-                <Nav.Item onClick = {config} eventKey="3" icon={<Icon icon="gear-circle" />}>
-                    Configuration
-                </Nav.Item>
-                <Nav.Item onClick = {info} eventKey="4" icon={<Icon icon="info-circle" />}>
-                    Learn More
-                </Nav.Item>
-                </Nav>
+                    <Nav.Item onClick = {dash} eventKey="1" icon={<Icon icon="dashboard" />}>
+                        Dashboard
+                    </Nav.Item>
+                    <Nav.Item onClick = {stats} eventKey="2" icon={<Icon icon="bar-chart" />}>
+                        Statistics
+                    </Nav.Item>
+                    <Nav.Item onClick = {config} eventKey="3" icon={<Icon icon="gear-circle" />}>
+                        Configuration
+                    </Nav.Item>
+                    <Nav.Item onClick = {info} eventKey="4" icon={<Icon icon="info-circle" />}>
+                        Learn More
+                    </Nav.Item>
+
+                    
+                </Nav>  
             </Sidenav.Body>
-            </Sidenav>
+            </Sidenav><br/>
+            {props.active &&
+                <Button onClick = {props.stop} variant = "contained" style = {{backgroundColor: 'red', color: 'white'}}>Stop</Button>
+            }
         </div>
       </div>
   );

@@ -11,7 +11,7 @@ import { CountdownCircleTimer } from 'react-countdown-circle-timer';
 import {withRouter} from "react-router-dom";
 
 //Material UI
-import { makeStyles, withStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
 import Button from "@material-ui/core/Button";
 import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
@@ -39,7 +39,7 @@ const useStyles = makeStyles((theme) => ({
       margin: theme.spacing(1),
     },
     title : {
-        color: theme.palette.text.primary,
+        color: "white",
         textAlign: "center",
     },
     text : {
@@ -54,57 +54,27 @@ class Home extends React.Component {
     constructor(props) {
         super();
 
-        let firstTime = true;
-        let config = undefined;
-        let page = '0';
-
-        //Check path
-        let path = window.location.pathname;
-        if (path === "/dashboard"){
-            page = '1';
-        }
-        else if (path === "/stats"){
-            page = '2';
-        }
-        else if (path === "/config"){
-            page = '3';
-        }
-        else if (path === "/info"){
-            page = '4';
-        }
-
-        //Get Local Storage Values
-        if (JSON.parse(localStorage.getItem('config')) !== null && Notification.permission === "granted"){
-            firstTime = false;
-            config = JSON.parse(localStorage.getItem('config'))
-        }
-
         this.state = {
-            openingModal: page !== "3" ? firstTime: false,
-            configModal: page === "3" ? true : page === "0" && !firstTime,
+            openingModal: false,
+            configModal: false,
 
-            data: [
-                {"date": "10/15/2020", "duration": "1 Hour"},
-                {"date": "10/15/2020", "duration": "1 Hour"},
-                {"date": "10/15/2020", "duration": "1 Hour"},
-                {"date": "10/15/2020", "duration": "1 Hour"},
-                {"date": "10/15/2020", "duration": "1 Hour"},
-                {"date": "10/15/2020", "duration": "1 Hour"}
-            ],
+            data: [],
 
             countdownEye: false,
             countdownMove: false,
             countdownEyeInterval: false,
             countdownMoveInterval: false,
 
-            eyeTime: !firstTime ? config.eyeTime : 20,
-            eyeInterval: !firstTime ? config.eyeInterval : 20,
-            moveTime: !firstTime ? config.moveTime : 5,
-            moveInterval: !firstTime ? config.moveInterval : 60,
+            eyeTime: 20,
+            eyeInterval: 20,
+            moveTime: 5,
+            moveInterval: 60,
+            enabled: {'eye': true, 'move': true},
 
-            enabled: {'eye': !firstTime ? config.eye : true, 'move': !firstTime ? config.move : true},
-            nav: page,
-            active: false
+            nav: "0",
+            active: false,
+            eyeTimeout: null,
+            moveTimeout: null,
         }
 
         this.setEyeTime = this.setEyeTime.bind(this);
@@ -125,6 +95,9 @@ class Home extends React.Component {
         this.startMove = this.startMove.bind(this);
         this.startMove = this.startMove.bind(this);
         this.setConfigModal = this.setConfigModal.bind(this);
+        this.stop = this.stop.bind(this);
+        this.setActive = this.setActive.bind(this);
+        this.tableOnAction = this.tableOnAction.bind(this);
     }
     
     //states
@@ -164,6 +137,9 @@ class Home extends React.Component {
     setConfigModal(val){
         this.setState({configModal: val})
     }
+    setActive(val){
+        this.setState({active: val});
+    }
     handleEnabled(type){
         if (type === 'eye'){
             this.setState({enabled: {'eye': !this.state.enabled.eye, 'move': this.state.enabled.move}})
@@ -174,12 +150,76 @@ class Home extends React.Component {
     }
 
     componentDidMount(){
+        let firstTime = true;
+        let config = undefined;
+        let page = '0';
+
+        //Get Local Storage Values
+        if (JSON.parse(localStorage.getItem('config')) !== null && Notification.permission === "granted"){
+            firstTime = false;
+            config = JSON.parse(localStorage.getItem('config'))
+        }
+
+        //Load Current Data
+        if (JSON.parse(localStorage.getItem('data')) !== null){
+            this.setState({data: JSON.parse(localStorage.getItem('data'))});
+        }
+
+        if (!firstTime){
+            this.setState(
+                {
+                    eyeTime: config.eyeTime,
+                    eyeInterval: config.eyeInterval,
+                    moveTime: config.moveTime,
+                    moveInterval: config.moveInterval,
+                    enabled: {eye: config.eye, move: config.move}
+                }
+            )
+        }
+
+        //Check path
+        let path = window.location.pathname;
+        if (path === "/dashboard"){
+            page = '1';
+        }
+        else if (path === "/stats"){
+            page = '2';
+        }
+        else if (path === "/config"){
+            page = '3';
+        }
+        else if (path === "/info"){
+            page = '4';
+        }
+
+        this.setState(
+            { nav: page }
+        )
+
+        if (page === "3"){
+            this.setState(
+                { configModal: true }
+            )
+        }
+        else if (firstTime){
+            this.props.history.push('/')
+            this.setState(
+                { openingModal: true }
+            )
+        }
+        else if (page === "0"){
+            this.setState({nav: "1"});
+            this.props.history.push("/dashboard")
+        }
+
         window.addEventListener('beforeunload', (event) => {
             event.preventDefault();
             event.returnValue = '';
             
-            let config = {'eye': this.state.enabled.eye, 'move': this.state.enabled.move, 'eyeTime': this.state.eyeTime, 'eyeInterval': this.state.eyeInterval, 'moveTime': this.state.moveTime, 'moveInterval': this.state.moveInterval}
+            let config = {'eye': this.state.enabled.eye, 'move': this.state.enabled.move, 'eyeTime': parseFloat(this.state.eyeTime), 'eyeInterval': parseFloat(this.state.eyeInterval), 'moveTime': parseFloat(this.state.moveTime), 'moveInterval': parseFloat(this.state.moveInterval)}
             localStorage.setItem('config', JSON.stringify(config));
+            localStorage.setItem('active', this.state.active);
+            localStorage.setItem('data', JSON.stringify(this.state.data));
         });
     }
 
@@ -193,7 +233,7 @@ class Home extends React.Component {
 
     //To Start
     startScreen(){
-        if (!this.state.enabled.eye && !this.stateenabled.move){
+        if (!this.state.enabled.eye && !this.state.enabled.move){
             this.setState({configModal: false})
         }
         else if (Notification.permission === "granted"){
@@ -253,14 +293,14 @@ class Home extends React.Component {
 
     //Eye Countdown
     startEye(){
-        setTimeout(() => this.PushNotification("Time to Look Away", "Click to start timer", 'eye'), this.state.eyeInterval * 60000)
-        this.setState({countdownEyeInterval: true})
+        let eyeTimeout = setTimeout(() => this.PushNotification("Time to Look Away", "Click to start timer", 'eye'), this.state.eyeInterval * 60000)
+        this.setState({eyeTimeout: eyeTimeout, countdownEyeInterval: true})
     }
 
     //Move Countdown
     startMove(){
-        setTimeout(() => this.PushNotification("Time to Move", "Click to start timer", "move"), this.state.moveInterval * 60000)
-        this.setState({countdownMoveInterval: true})
+        let moveTimeout = setTimeout(() => this.PushNotification("Time to Move", "Click to start timer", "move"), this.state.moveInterval * 60000)
+        this.setState({moveTimeout: moveTimeout, countdownMoveInterval: true})
     }
 
     //Actually Start
@@ -271,57 +311,98 @@ class Home extends React.Component {
         if (this.state.enabled.move){
             this.startMove();
         }
+        if (this.state.enabled.eye | this.state.enabled.move){
+            let today = new Date();
+            let time = today.getHours() + ":" + today.getMinutes();
+            localStorage.setItem('startTime', time);
+            this.setState({active: true});
+        }
+        
+    }
+
+    //Table On Action
+    tableOnAction(type, key){
+        if (type === "delete"){
+            let check = window.confirm("Are you sure you want to delete this record?");
+
+            if (check){
+                let data = this.state.data.filter(item => item.key !== key);
+                this.setState({data: data});
+            }
+        }
+    }
+
+    //Stop Function
+    stop(){
+        this.setState({active: false, countdownEye: false, countdownMove: false, countdownEyeInterval: false, countdownMoveInterval: false});
+        if (this.state.enabled.eye){
+            clearTimeout(this.state.eyeTimeout)
+        }
+        if (this.state.enabled.move){
+            clearTimeout(this.state.moveTimeout)
+        }
+        let today = new Date()
+        let setDate = String(today.getMonth() + 1) + "/" + String(today.getDay()) + "/" + String(today.getFullYear());
+        let key = this.state.data[this.state.data.length-1].key + 1;
+        let start = localStorage.getItem('startTime').split(":");
+        let time = [today.getHours(), today.getMinutes()];
+        let setTime = time[0] !== parseInt(start[0]) ? String(time[0] - start[0]) + " Hours, ":"";
+        setTime += String(time[1] - start[1]) + " Minutes";
+        this.state.data.push({key: key, date: setDate, duration: setTime});
     }
 
     render() {
-        const {classes} = this.props
 
         return (
             <div className="Home">
                 <div className = "row">
-                    <div className = "col-md-4 nav-div">
-                        <Navbar page = {this.state.nav} setNav = {this.setNav} setConfigModal = {this.setConfigModal}/>
+                    <div className = "col-md-3 nav-div">
+                        <Navbar page = {this.state.nav} setNav = {this.setNav} stop = {this.stop} setConfigModal = {this.setConfigModal} active = {this.state.active}/>
                     </div>
 
-                    <div className = "col-md-8">
+                    <div className = "col-md-9">
                         <div style = {{marginRight: "2.5%"}}>
 
                         <div style = {window.location.pathname !== "/dashboard" ? {display: "none"} : {display: "block"}}>
-                            <h2 className = {classes.title}>Dashboard</h2><br/>
+                            <h2 style = {{color: "white"}}>Dashboard</h2><br/>
 
                             <div className="row">
                                 {this.state.countdownEye && 
                                 <div className = "col-md-6">
-                                    <Card variant = "outlined" className = "container">
-                                        <CardContent className = {classes.cardContent}>
-                                            <h3 className = {classes.text}>Eye Break Timer</h3><br/>
-                                            <center><CountdownCircleTimer
-                                                isPlaying
-                                                duration={this.state.eyeTime}
-                                                size = {250}
-                                                className = {classes.textColor}
-                                                colors={[
-                                                ['#004777', 0.33],
-                                                ['#F7B801', 0.33],
-                                                ['#A30000', 0.33],
-                                                ]}
-                                            >
-                                                {({ remainingTime }) => remainingTime !== 0 ? <h1>{remainingTime}</h1> : this.stopCountdown("eye")}
-                                            </CountdownCircleTimer></center><br/>
-                                        </CardContent>
-                                    </Card>
+                                    <div className = "card-container">
+                                        <Card variant = "outlined" className = "card-content">
+                                            <CardContent className = "card-inside">
+                                                <h3 color = "inherit">Eye Break Timer</h3><br/>
+                                                <center>
+                                                    <CountdownCircleTimer
+                                                        isPlaying
+                                                        duration={this.state.eyeTime}
+                                                        size = {300}
+                                                        colors={[
+                                                        ['#004777', 0.33],
+                                                        ['#F7B801', 0.33],
+                                                        ['#A30000', 0.33],
+                                                        ]}
+                                                    >
+                                                        {({ remainingTime }) => remainingTime !== 0 ? <h1>{remainingTime}</h1> : this.stopCountdown("eye")}
+                                                    </CountdownCircleTimer>
+                                                </center><br/>
+                                            </CardContent>
+                                        </Card>
+                                    </div>
                                 </div>
                                 }
 
                                 {this.state.countdownMove && 
                                 <div className = "col-md-6">
-                                    <Card variant = "outlined">
-                                        <CardContent className = {classes.cardContent}>
-                                            <h3 className = {classes.text}>Move Break Timer</h3><br/>
+                                    <div className = "card-container">
+                                    <Card variant = "outlined" className = "card-content">
+                                        <CardContent className = "card-inside">
+                                            <h3 color = "inherit">Move Break Timer</h3><br/>
                                             <center><CountdownCircleTimer
                                                 isPlaying
                                                 duration={this.state.moveTime * 60}
-                                                size = {250}
+                                                size = {300}
                                                 colors={[
                                                 ['#004777', 0.33],
                                                 ['#F7B801', 0.33],
@@ -332,19 +413,20 @@ class Home extends React.Component {
                                             </CountdownCircleTimer></center><br/>
                                         </CardContent>
                                     </Card>
+                                    </div>
                                 </div>
                                 }
 
                                 {this.state.countdownEyeInterval && 
                                 <div className = "col-md-3">
-                                    <Card variant = "outlined">
-                                        <CardContent className = {classes.cardContent}>
-                                            <h4 className = {classes.text}>Time Till Eye Break</h4><br/>
+                                    <div className = "card-container">
+                                    <Card variant = "outlined" className = "card-content">
+                                        <CardContent className = "card-inside">
+                                            <h5 color = "inherit">Time Till Eye Break</h5><br/>
                                             <center><CountdownCircleTimer
                                                 isPlaying
                                                 duration={this.state.eyeInterval * 60}
                                                 size = {125}
-                                                className = {classes.textColor}
                                                 colors={[
                                                 ['#004777', 0.33],
                                                 ['#F7B801', 0.33],
@@ -352,22 +434,23 @@ class Home extends React.Component {
                                                 ]}
                                             >
                                                 {({ remainingTime }) => remainingTime !== 0 ? <h4>{remainingTime > 60 ? Math.ceil(remainingTime/60) : remainingTime}</h4> : this.stopCountdown("eyeInt")}
-                                            </CountdownCircleTimer></center><br/>
+                                            </CountdownCircleTimer></center>
                                         </CardContent>
                                     </Card>
+                                    </div>
                                 </div>
                                 }
 
                                 {this.state.countdownMoveInterval && 
                                 <div className = "col-md-3">
-                                    <Card variant = "outlined" className = "container">
-                                        <CardContent className = {classes.cardContent}>
-                                            <h4 className = {classes.text}>Time Till Move Break</h4><br/>
+                                    <div className="card-container">
+                                    <Card variant = "outlined" className = "card-content">
+                                        <CardContent className = "card-inside">
+                                            <h5 color = "inherit">Time Till Move Break</h5><br/>
                                             <center><CountdownCircleTimer
                                                 isPlaying
                                                 duration={this.state.moveInterval * 60}
                                                 size = {125}
-                                                className = {classes.textColor}
                                                 colors={[
                                                 ['#004777', 0.33],
                                                 ['#F7B801', 0.33],
@@ -375,46 +458,70 @@ class Home extends React.Component {
                                                 ]}
                                             >
                                                 {({ remainingTime }) => remainingTime !== 0 ? <h4>{remainingTime > 60 ? Math.ceil(remainingTime/60) : remainingTime}</h4> : this.stopCountdown("moveInt")}
-                                            </CountdownCircleTimer></center><br/>
+                                            </CountdownCircleTimer></center>
                                         </CardContent>
                                     </Card>
+                                    </div>
                                 </div>
                                 }
 
+                                {!this.state.active && 
+                                    <div className = "col-md-3">
+                                        <div className = "card-container">
+                                            <Card variant = "outlined" className="card-content">
+                                                <CardContent className = "card-inside">
+                                                    <h4 color = "inherit">Get Started</h4><br/>
+                                                    <p>Learn more about how you spend time with digital devices. Analyze the time that you spend, and how many breaks you take.</p>
+                                                </CardContent>
+                                                <CardActionArea style = {{paddingTop: "10px", paddingBottom: "10px"}} onClick = {this.startScreen}>
+                                                    <h6>Start</h6>
+                                                </CardActionArea>
+                                            </Card>
+                                        </div>
+                                    </div>
+                                }
+
                                 <div className = "col-md-3">
-                                    <Card variant = "outlined">
-                                        <CardContent className = {classes.cardContent}>
-                                            <h4 className = {classes.text}>Statistics</h4><br/>
-                                            <p>Learn more about how you spend time with digital devices. Analyze the time that you spend, and how many breaks you take.</p>
-                                        </CardContent>
-                                        <CardActionArea style = {{paddingTop: "10px", paddingBottom: "10px"}} onClick = {() =>  {this.props.history.push("/stats"); this.setState({nav: "2"});}}>
-                                            <h6>View</h6>
-                                        </CardActionArea>
-                                    </Card>
+                                    <div className = "card-container">
+                                        <Card variant = "outlined" className = "card-content">
+                                            <CardContent className = "card-inside">
+                                                <h4 color = "inherit">Statistics</h4><br/>
+                                                <p>Learn more about how you spend time with digital devices. Analyze the time that you spend, and how many breaks you take.</p>
+                                            </CardContent>
+                                            <CardActionArea style = {{paddingTop: "10px", paddingBottom: "10px"}} onClick = {() =>  {this.props.history.push("/stats"); this.setState({nav: "2"});}}>
+                                                <h6>View</h6>
+                                            </CardActionArea>
+                                        </Card>
+                                    </div>
                                 </div>
 
                                 <div className = "col-md-3">
-                                    <Card variant = "outlined">
-                                        <CardContent className = {classes.cardContent}>
-                                            <h4 className = {classes.text}>Configuration</h4><br/>
+                                    <div className = "card-container">
+                                    <Card variant = "outlined" className="card-content">
+                                        <CardContent className = "card-inside">
+                                            <h4 color = "inherit">Configuration</h4><br/>
                                             <p>Learn more about how you spend time with digital devices. Analyze the time that you spend, and how many breaks you take.</p>
                                         </CardContent>
                                         <CardActionArea style = {{paddingTop: "10px", paddingBottom: "10px"}} onClick = {() => {this.props.history.push("/config"); this.setState({nav: "3", configModal: true});}}>
                                             <h6>View</h6>
                                         </CardActionArea>
                                     </Card>
+                                    </div>
                                 </div>
 
                                 <div className = "col-md-3">
-                                    <Card variant = "outlined">
-                                        <CardContent className = {classes.cardContent}>
-                                            <h4 className = {classes.text}>Learn More</h4><br/>
+                                    <div className = "card-container">
+                                    <Card variant = "outlined" className = "card-content">
+                                        <CardContent className = "card-inside">
+                                            <h4 color = "inherit">Learn More</h4><br/>
                                             <p>Learn more about how you spend time with digital devices. Analyze the time that you spend, and how many breaks you take.</p>
                                         </CardContent>
                                         <CardActionArea style = {{paddingTop: "10px", paddingBottom: "10px"}} onClick = {() => {this.props.history.push("/info"); this.setState({nav: "4"});}}>
                                             <h6>View</h6>
                                         </CardActionArea>
                                     </Card>
+                                    </div>
+
                                 </div>
 
                             </div>
@@ -422,17 +529,21 @@ class Home extends React.Component {
                     
 
                         <div style = {window.location.pathname !== "/stats" ? {display: "none"} : {display: "block"}}>
-                            <h2 className = {classes.title}>Statistics</h2><br/>
+                            <h2 style = {{color: "white"}}>Statistics</h2><br/>
 
-                            <Table title = "Statistics" data = {this.state.data}/>
+                            <Table onAction = {this.tableOnAction} title = "Statistics" data = {this.state.data}/>
 
                         </div>
 
 
                         <div style = {window.location.pathname !== "/config" ? {display: "none"} : {display: "block"}}>
-                            <h2 className = {classes.title}>Configuration</h2><br/><br/>
+                            <h2 style = {{color: "white"}}>Configuration</h2><br/><br/>
 
                             <Button onClick = {() => this.setConfigModal(true)} color = "primary" variant = "contained">Open Configurator</Button>
+                        </div>
+
+                        <div style = {window.location.pathname !== "/info" ? {display: "none"} : {display: "block"}}>
+                            <h2 style = {{color: "white"}}>Learn More</h2><br/><br/>
                         </div>
 
                     </div>
@@ -464,4 +575,4 @@ class Home extends React.Component {
 }
 
 //export default Home;
-export default withRouter(withStyles(useStyles, { withTheme: true })(Home));
+export default withRouter(Home);

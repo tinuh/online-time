@@ -16,7 +16,7 @@ import Brightness7Icon from '@material-ui/icons/Brightness7';
 
 const useStyles = makeStyles((theme) => ({
     bgColor : {
-        backgroundColor: theme.palette.primary.main
+        backgroundColor: 'white'
     },
 }));
 
