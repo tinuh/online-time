@@ -1,6 +1,5 @@
 import React from 'react';
-import Light from 'rsuite/dist/styles/rsuite-default.css';
-//import Dark from "rsuite/dist/styles/rsuite-dark.css";
+import 'rsuite/dist/styles/rsuite-default.css';
 import './App.css';
 import {BrowserRouter, Route, Switch} from "react-router-dom";
 import {ThemeProvider, createMuiTheme} from "@material-ui/core";

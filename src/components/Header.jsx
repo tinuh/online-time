@@ -15,9 +15,12 @@ import Brightness4Icon from '@material-ui/icons/Brightness4';
 import Brightness7Icon from '@material-ui/icons/Brightness7';
 
 const useStyles = makeStyles((theme) => ({
-    bgColor : {
-        backgroundColor: 'white'
-    },
+  bgColor : {
+      backgroundColor: theme.palette.background.paper,
+  },
+  textColor : {
+    color: theme.palette.text.primary,
+  }
 }));
 
 function Header(props) {
@@ -56,6 +59,7 @@ function Header(props) {
             />
             <label
               className = {classes.textColor}
+              //color = "inherit"
               style={{
                 fontSize: "1.5em",
               }}
@@ -73,17 +77,17 @@ function Header(props) {
           </div>
           <div className="d-none d-sm-block col-md-7 header-center text-center ">
             <b><label
-              className = {"font-weight-bold ml-4 mr-4 "}
+              className = {"font-weight-bold ml-4 mr-4 " + classes.textColor}
               style={{
                 //fontFamily: "Palatino Linotype",
                 fontSize: "3.2em",
-                color: "inherit",
               }}
             >
               Online Time
             </label></b>
             <br />
             <label
+              className = {classes.textColor}
               style={{
                 //fontFamily: "Palatino Linotype",
                 fontSize: "1.2em"
@@ -99,13 +103,13 @@ function Header(props) {
                 {theme.palette.type === "dark" ? (
                       <Tooltip title="Toggle Light Mode">
                         <IconButton color="inherit" onClick={handleToggle}>
-                          <Brightness7Icon />
+                          <Brightness7Icon style = {{color: 'white'}}/>
                         </IconButton>
                       </Tooltip>
                     ) : (
                       <Tooltip title="Toggle Dark Mode">
                         <IconButton color="inherit" onClick={handleToggle}>
-                          <Brightness4Icon />
+                          <Brightness4Icon style = {{color: 'black'}} />
                         </IconButton>
                       </Tooltip>
                     )}

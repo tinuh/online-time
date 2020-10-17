@@ -13,7 +13,7 @@ import Button from '@material-ui/core/Button';
 
 const useStyles = makeStyles((theme) => ({
     bgColor : {
-        color: theme.palette.primary.main
+        backgroundColor: theme.palette.background.paper,
     },
 }));
 
@@ -45,7 +45,7 @@ function Navbar(props) {
   return (
       <div className = "side-nav">
           <div style={{ width: "100%" }}>
-            <Sidenav activeKey={props.page}>
+            <Sidenav activeKey={props.page} className = {classes.bgColor}>
             <Sidenav.Body>
                 <Nav>
                     <Nav.Item onClick = {dash} eventKey="1" icon={<Icon icon="dashboard" />}>

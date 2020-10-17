@@ -1,4 +1,5 @@
 import React from 'react';
+import {Fragment} from 'react';
 import '../styles/style.css';
 
 //Import images
@@ -37,10 +38,6 @@ const useStyles = makeStyles((theme) => ({
     },
     margin: {
       margin: theme.spacing(1),
-    },
-    title : {
-        color: "white",
-        textAlign: "center",
     },
     text : {
         color: theme.palette.text.primary,
@@ -419,6 +416,12 @@ class Home extends React.Component {
                                     </div>
                                 </div>
                                 }
+                                
+                                {//(!this.state.countdownEye && this.state.countdownMove) | (this.state.countdownEye && !this.state.countdownMove) ? <div className = "row"> : </>
+                                }
+
+                                <Fragment className = {(!this.state.countdownEye && this.state.countdownMove) | (this.state.countdownEye && !this.state.countdownMove) ? "row" : ""}
+                                >
 
                                 {this.state.countdownEyeInterval && 
                                 <div className = "col-md-3">
@@ -526,6 +529,8 @@ class Home extends React.Component {
                                     </div>
 
                                 </div>
+
+                            </Fragment>
 
                             </div>
                         </div>
