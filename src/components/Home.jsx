@@ -343,7 +343,10 @@ class Home extends React.Component {
         }
         let today = new Date()
         let setDate = String(today.getMonth() + 1) + "/" + String(today.getDay()) + "/" + String(today.getFullYear());
-        let key = this.state.data[this.state.data.length-1].key + 1;
+        let key = 0
+        if (this.state.data.length > 0){
+            key = this.state.data[this.state.data.length-1].key + 1;
+        }
         let start = localStorage.getItem('startTime').split(":");
         let time = [today.getHours(), today.getMinutes()];
         let setTime = time[0] !== parseInt(start[0]) ? String(time[0] - start[0]) + " Hours, ":"";
