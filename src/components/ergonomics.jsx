@@ -1,13 +1,14 @@
 import React from 'react';
 import '../styles/style.css';
 
-//components
-import Button from "@material-ui/core/Button";
-import Modal from "@material-ui/core/modal";
-import Backdrop from '@material-ui/core/Backdrop';
-import Fade from '@material-ui/core/Fade';
+//rsuite
 
+//Material UI Theme
 import { makeStyles } from '@material-ui/core/styles';
+import Modal from '@material-ui/core/Modal';
+import Button from '@material-ui/core/Button';
+import Fade from '@material-ui/core/Fade';
+import Backdrop from '@material-ui/core/Backdrop';
 
 const useStyles = makeStyles((theme) => ({
     modal: {
@@ -38,22 +39,17 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 
-function GetStarted(props) {
+function Ergonomics(props) {
     const classes = useStyles();
 
-    //Modal Pop Up to get started
-    const getStarted = () => {
-        props.onAction();
-    }
-
     return (
-        <div className="Home">
-            <Modal
+      <div className = "breathing">
+        <Modal
                 aria-labelledby="transition-modal-title"
                 aria-describedby="transition-modal-description"
                 className={classes.modal}
                 open={props.open}
-                onClose={getStarted}
+                onClose={props.stop}
                 closeAfterTransition
                 BackdropComponent={Backdrop}
                 BackdropProps={{
@@ -62,15 +58,18 @@ function GetStarted(props) {
             >
                 <Fade in={props.open}>
                 <div className={classes.paper}>
-                    <h2 id="transition-modal-title" className = {classes.title}>Welcome to Digital Fit</h2>
-                    <p id="transition-modal-description" className = {classes.text}>Protect your eyes and health while using your computer.</p><br/>
-                    <Button variant = "contained" color = "primary" onClick = {getStarted}>Get Started</Button>
+                    <h2 id="transition-modal-title" className = {classes.title}>Ergonomics Lesson</h2>
+                    
+                    <div>
+                        <iframe title = "Ergonomics Video" width="560" height="315" src="https://www.youtube.com/embed/F8_ME4VwTiw?autoplay=1" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe>
+                    </div><br/>
+
+                    <Button variant = "contained" style = {{backgroundColor: 'red', color: 'white'}} onClick = {props.stop}>Exit</Button>
                 </div>
                 </Fade>
             </Modal>
-            
-        </div>
+      </div>
   );
 }
 
-export default GetStarted;
+export default Ergonomics;

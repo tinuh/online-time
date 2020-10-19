@@ -1,13 +1,17 @@
 import React from 'react';
 import '../styles/style.css';
 
-//components
-import Button from "@material-ui/core/Button";
-import Modal from "@material-ui/core/modal";
-import Backdrop from '@material-ui/core/Backdrop';
-import Fade from '@material-ui/core/Fade';
+//rsuite
 
+//Material UI Theme
 import { makeStyles } from '@material-ui/core/styles';
+import Modal from '@material-ui/core/Modal';
+import Button from '@material-ui/core/Button';
+import Fade from '@material-ui/core/Fade';
+import Backdrop from '@material-ui/core/Backdrop';
+
+//IMG
+import imgBreath from '../img/breathing.gif';
 
 const useStyles = makeStyles((theme) => ({
     modal: {
@@ -38,22 +42,17 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 
-function GetStarted(props) {
+function Breathing(props) {
     const classes = useStyles();
 
-    //Modal Pop Up to get started
-    const getStarted = () => {
-        props.onAction();
-    }
-
     return (
-        <div className="Home">
-            <Modal
+      <div className = "breathing">
+        <Modal
                 aria-labelledby="transition-modal-title"
                 aria-describedby="transition-modal-description"
                 className={classes.modal}
                 open={props.open}
-                onClose={getStarted}
+                onClose={props.stop}
                 closeAfterTransition
                 BackdropComponent={Backdrop}
                 BackdropProps={{
@@ -62,15 +61,18 @@ function GetStarted(props) {
             >
                 <Fade in={props.open}>
                 <div className={classes.paper}>
-                    <h2 id="transition-modal-title" className = {classes.title}>Welcome to Digital Fit</h2>
-                    <p id="transition-modal-description" className = {classes.text}>Protect your eyes and health while using your computer.</p><br/>
-                    <Button variant = "contained" color = "primary" onClick = {getStarted}>Get Started</Button>
+                    <h2 id="transition-modal-title" className = {classes.title}>Breathing Exercise</h2>
+                    
+                    <div>
+                        <img alt = "Breathing Exercise" style = {{borderRadius: '10%'}} src = {imgBreath}/>
+                    </div><br/>
+
+                    <Button variant = "contained" style = {{backgroundColor: 'red', color: 'white'}} onClick = {props.stop}>Exit</Button>
                 </div>
                 </Fade>
             </Modal>
-            
-        </div>
+      </div>
   );
 }
 
-export default GetStarted;
+export default Breathing;

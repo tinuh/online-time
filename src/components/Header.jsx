@@ -13,6 +13,8 @@ import {createMuiTheme} from "@material-ui/core";
 //MUI Icons
 import Brightness4Icon from '@material-ui/icons/Brightness4';
 import Brightness7Icon from '@material-ui/icons/Brightness7';
+import VolumeOffIcon from '@material-ui/icons/VolumeOff';
+import VolumeUpIcon from '@material-ui/icons/VolumeUp';
 
 const useStyles = makeStyles((theme) => ({
   bgColor : {
@@ -44,6 +46,11 @@ function Header(props) {
     }
   }
 
+  const sound = () => {
+    localStorage.setItem('sound', !props.sound);
+    props.setSound(!props.sound);
+  }
+
   return (
     <nav className={"container-fluid container-header " + classes.bgColor}>
     <div className="Navbar">
@@ -64,7 +71,7 @@ function Header(props) {
                 fontSize: "1.5em",
               }}
             >
-              <b>Online Time</b>
+              <b>Digital Fit</b>
             </label>
           </div>
           {/* for bigger screen */}
@@ -83,7 +90,7 @@ function Header(props) {
                 fontSize: "3.2em",
               }}
             >
-              Online Time
+              Digital Fit
             </label></b>
             <br />
             <label
@@ -112,7 +119,20 @@ function Header(props) {
                           <Brightness4Icon style = {{color: 'black'}} />
                         </IconButton>
                       </Tooltip>
-                    )}
+                )}
+                {props.sound ? (
+                  <Tooltip title="Turn off sound effects">
+                    <IconButton color="inherit" onClick={sound}>
+                      <VolumeUpIcon className = {classes.textColor}/>                      
+                    </IconButton>
+                  </Tooltip>
+                  ) : (
+                  <Tooltip title="Turn on sound effects">
+                    <IconButton color="inherit" onClick={sound}>
+                      <VolumeOffIcon className = {classes.textColor}/>
+                    </IconButton>
+                  </Tooltip>
+                  )}
                 </div>
               </div>
           </div>

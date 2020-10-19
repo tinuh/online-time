@@ -12,7 +12,7 @@ import NotFound from "./components/404";
 function App() {
 
   //Theming Engine
-  var storedTheme = JSON.parse(localStorage.getItem('theme'));
+  let storedTheme = JSON.parse(localStorage.getItem('theme'));
   if (storedTheme === null){
     storedTheme = {
       palette: { 
@@ -28,22 +28,41 @@ function App() {
     localStorage.setItem('theme', JSON.stringify(storedTheme))
   }
 
-
-  const [theme, setTheme] = React.useState(createMuiTheme(storedTheme))
+  let storedSound = localStorage.getItem('sound');
+  if (storedSound === null){
+    storedSound = true;
+    localStorage.setItem('sound', storedSound);
+  }
+  
+  const [sound, setSound] = React.useState(storedSound === 'true');
+  const [theme, setTheme] = React.useState(createMuiTheme(storedTheme));
 
   return (
     <div className="App">
         <BrowserRouter>
           <ThemeProvider theme = {theme}>
           
-            <Header setTheme = {setTheme} />
+            <Header setTheme = {setTheme} sound = {sound} setSound = {setSound}/>
 
             <Switch>
-              <Route exact path = "/" component={Home}/>
-              <Route exact path = "/dashboard" component={Home}/>
-              <Route exact path = "/stats" component={Home}/>
-              <Route exact path = "/config" component={Home}/>
-              <Route exact path = "/info" component={Home}/>
+              <Route exact path = "/">
+                <Home sound = {sound}/>
+              </Route>
+              <Route exact path = "/dashboard">
+                <Home sound = {sound}/>
+              </Route>
+              <Route exact path = "/stats">
+                <Home sound = {sound}/>
+              </Route>
+              <Route exact path = "/config">
+                <Home sound = {sound}/>
+              </Route>
+              <Route exact path = "/info">
+                <Home sound = {sound}/>
+              </Route>
+              <Route exact path = "/tools">
+                <Home sound = {sound}/>
+              </Route>
               <Route component={NotFound} />
 
             </Switch>

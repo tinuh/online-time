@@ -37,8 +37,13 @@ function Navbar(props) {
         props.setConfigModal(true);
     }
 
-    const info = () => {
+    const tools = () => {
         props.setNav("4");
+        history.push("/tools");
+    }  
+
+    const info = () => {
+        props.setNav("5");
         history.push("/info");
     }  
 
@@ -57,7 +62,10 @@ function Navbar(props) {
                     <Nav.Item onClick = {config} eventKey="3" icon={<Icon icon="gear-circle" />}>
                         Configuration
                     </Nav.Item>
-                    <Nav.Item onClick = {info} eventKey="4" icon={<Icon icon="info-circle" />}>
+                    <Nav.Item onClick = {tools} eventKey="4" icon={<Icon icon="bolt" />}>
+                        Tools
+                    </Nav.Item>
+                    <Nav.Item onClick = {info} eventKey="5" icon={<Icon icon="info-circle" />}>
                         Learn More
                     </Nav.Item>
 

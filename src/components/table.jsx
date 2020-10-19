@@ -1,58 +1,38 @@
 import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import {Table as MTable} from '@material-ui/core';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableContainer from '@material-ui/core/TableContainer';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
-import Paper from '@material-ui/core/Paper';
-import DeleteIcon from '@material-ui/icons/Delete';
-import IconButton from '@material-ui/core/IconButton';
-import Tooltip from "@material-ui/core/Tooltip";
-
-const useStyles = makeStyles({
-  table: {
-    minWidth: 650,
-  },
-});
+//import { makeStyles } from '@material-ui/core/styles';
+//import { DataGrid } from '@material-ui/data-grid';
+//import DeleteIcon from '@material-ui/icons/Delete';
+//import Paper from '@material-ui/core/Paper'
+import MUIDataTable from "mui-datatables";
 
 function Table(props) {
-  const classes = useStyles();
 
-  const rows = props.data
+  const data = props.data;
+  const columns = props.columns;
+  const options = {
+    filterType: 'checkbox',
+    rowsPerPage: 5,
+    rowsPerPageOptions: [5, 10, 20],
+    jumpToPage: true,
+    downloadOptions: {
+      filename: "online_time_statistics.csv",
+      seperator: ",",
+    },
+    onRowsDelete: props.onAction
+  }
 
   return (
-    <TableContainer component={Paper}>
-      <MTable className={classes.table} aria-label="simple table">
-        <TableHead>
-          <TableRow>
-            <TableCell>Date</TableCell>
-            <TableCell align="right">Duration of Work</TableCell>
-            <TableCell align="right">Eye Breaks</TableCell>
-            <TableCell align="right">Move Breaks</TableCell>
-            <TableCell align="center">Actions</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {rows.map((row) => (
-            <TableRow key={row.name}>
-              <TableCell component="th" scope="row">{row.date}</TableCell>
-              <TableCell align="right">{row.duration}</TableCell>
-              <TableCell align="right">{row.carbs}</TableCell>
-              <TableCell align="right">{row.protein}</TableCell>
-              <TableCell align="center">
-                  <Tooltip title = "Delete Record">
-                    <IconButton onClick = {() => props.onAction('delete', row.key)} style = {{padding: "none"}}>
-                        <DeleteIcon/>
-                    </IconButton>
-                  </Tooltip>
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </MTable>
-    </TableContainer>
+    /* <Paper>
+      <div style={{ height: 400, width: '100%' }}>
+          <DataGrid delete = {true} rows={props.data} columns={props.columns} pageSize={5} checkboxSelection />
+      </div>
+    </Paper> */
+    <MUIDataTable
+      title={props.title}
+      data={data}
+      columns={columns}
+      options={options}
+    />
   );
 }
 
