@@ -764,7 +764,11 @@ class Home extends React.Component {
                                  The first of which is eye strain, it can be quite damaging for your eyes to focus on a bright screen for a long time. 
                                  Optometrists recommend following the 20-20-20 rule, which is to look away from our screen every 20 minutes, for 20 seconds at something that is 20 feet in the distance. 
                                  Furthermore, working at a desk for a long time can cause chronic health problems. 
-                                 That is why it is important to keep our body active and work while maintaining proper ergonomics.<br/>
+                                 That is why it is important to keep our body active and work while maintaining proper ergonomics.<br/><br/>
+                                
+                                <div className = "video-container">
+                                 <iframe title = "Digital Fit - By Tinu Vanapamula" className = "video" src="https://www.youtube.com/embed/b3GnPWRpQjI" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe>   
+                                </div>
 
                                  <br/> &nbsp;&nbsp;&nbsp; Digital Fit is a brand new web application built on the react.js framework.
                                  This application does not use a database and all of your data will be safely secured on your own computer.
