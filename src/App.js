@@ -3,6 +3,7 @@ import 'rsuite/dist/styles/rsuite-default.css';
 import './App.css';
 import {BrowserRouter, Route, Switch} from "react-router-dom";
 import {ThemeProvider, createMuiTheme} from "@material-ui/core";
+import AdSense from 'react-adsense';
 
 //Components
 import Home from "./components/Home";
@@ -66,7 +67,16 @@ function App() {
               <Route component={NotFound} />
 
             </Switch>
-            </ThemeProvider>
+
+            <AdSense.Google
+              client='ca-pub-5925944145079992'
+              slot='9001069033'
+              style={{ display: 'block' }}
+              format='auto'
+              responsive='true'
+            />
+            
+          </ThemeProvider>
         </BrowserRouter>
     </div>
   );
