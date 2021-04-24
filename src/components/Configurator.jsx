@@ -3,7 +3,7 @@ import '../styles/style.css';
 
 //Components
 import Button from "@material-ui/core/Button";
-import Modal from "@material-ui/core/modal";
+import Modal from "@material-ui/core/Modal";
 import Backdrop from '@material-ui/core/Backdrop';
 import Fade from '@material-ui/core/Fade';
 import TextField from "@material-ui/core/TextField";
@@ -14,8 +14,6 @@ import FormControl from '@material-ui/core/FormControl';
 import InputLabel from '@material-ui/core/InputLabel';
 import Select from "@material-ui/core/Select";
 import MenuItem from '@material-ui/core/MenuItem';
-//import ToggleButton from '@material-ui/lab/ToggleButton';
-//import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
 
 
 const useStyles = makeStyles((theme) => ({
